@@ -5,7 +5,7 @@ import Card from "../components/Card";
 
 // Fetch data from local API
 const fetchDataFromAPI = async (setFeeds, setIsLoading) => {
-  const url = "https://kiran-app-git-main-kshitiz-jains-projects-2b062e24.vercel.app/api/data";
+  const url = "https://kiran-application.onrender.com/api/data";
 
   try {
     const response = await fetch(url);
