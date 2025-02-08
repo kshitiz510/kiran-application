@@ -34,14 +34,14 @@ const Dashboard = () => {
   }, []);
 
   // Extracting data for the first group (Irradiance, Temperature, Voltage)
-  const timeLabels = feeds.map((feed, index) =>
-    index % 5 === 0 ? new Date(feed.timestamp).toLocaleTimeString() : ""
-  );
-  const field1Data = feeds.map((feed) => parseFloat(feed.irradiance) || 0); // Irradiance
-  const field2Data = feeds.map((feed) => parseFloat(feed.temperature) || 0); // Temperature
-  const field3Data = feeds.map((feed) => parseFloat(feed.voltage) || 0); // Voltage
-  const field4Data = feeds.map((feed) => parseFloat(feed.azimuth) || 0); // Azimuth
-  const field5Data = feeds.map((feed) => parseFloat(feed.zenith) || 0); // Zenith
+  const timeLabels = feeds
+    .map((feed, index) => (index % 5 === 0 ? new Date(feed.timestamp).toLocaleTimeString() : ""))
+    .reverse();
+  const field1Data = feeds.map((feed) => parseFloat(feed.irradiance) || 0).reverse(); // Irradiance
+  const field2Data = feeds.map((feed) => parseFloat(feed.temperature) || 0).reverse(); // Temperature
+  const field3Data = feeds.map((feed) => parseFloat(feed.voltage) || 0).reverse(); // Voltage
+  const field4Data = feeds.map((feed) => parseFloat(feed.azimuth) || 0).reverse(); // Azimuth
+  const field5Data = feeds.map((feed) => parseFloat(feed.zenith) || 0).reverse(); // Zenith
 
   const chartConfig = {
     backgroundGradientFrom: "#fff",
