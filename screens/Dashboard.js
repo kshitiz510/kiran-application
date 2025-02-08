@@ -24,11 +24,12 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchDataFromAPI(setFeeds, setIsLoading);
-
-    const intervalId = setInterval(() => {
+    const fetchData = () => {
       fetchDataFromAPI(setFeeds, setIsLoading);
-    }, 15000); // Fetch data every 15 seconds
+    };
+
+    fetchData(); // Initial fetch
+    const intervalId = setInterval(fetchData, 5000); // Fetch data every 5 seconds
 
     return () => clearInterval(intervalId); // Cleanup interval on component unmount
   }, []);
