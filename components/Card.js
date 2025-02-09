@@ -1,12 +1,12 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 
-const Card = ({ fieldName, value, icon }) => {
+const Card = ({ fieldName, value, icon, color }) => {
   return (
-    <View style={styles.card}>
-      <Image source={icon} style={styles.icon} />
+    <View style={[styles.card, { borderColor: color, shadowColor: color }]}>
+      <Image source={icon} style={[styles.icon, { tintColor: color }]} />
       <Text style={styles.fieldName}>{fieldName}</Text>
-      <Text style={styles.value}>{value}</Text>
+      <Text style={[styles.value, { color }]}>{value}</Text>
     </View>
   );
 };
@@ -14,30 +14,31 @@ const Card = ({ fieldName, value, icon }) => {
 const styles = StyleSheet.create({
   card: {
     width: "48%",
-    backgroundColor: "#fff",
-    borderRadius: 8,
     padding: 16,
-    marginBottom: 16,
+    marginVertical: 8,
+    borderWidth: 2,
+    borderRadius: 12,
+    backgroundColor: "#f7f7f7", // Slight greyed-out background color
     alignItems: "center",
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.3,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 5, // For Android shadow
   },
   icon: {
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
     marginBottom: 8,
   },
   fieldName: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
     marginBottom: 4,
+    textAlign: "center",
   },
   value: {
-    fontSize: 14,
-    color: "#666",
+    fontSize: 16,
+    textAlign: "center",
   },
 });
 

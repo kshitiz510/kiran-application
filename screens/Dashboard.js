@@ -29,14 +29,18 @@ const Dashboard = () => {
     };
 
     fetchData(); // Initial fetch
-    const intervalId = setInterval(fetchData, 2500); // Fetch data every 5 seconds
+    const intervalId = setInterval(fetchData, 2500); // Fetch data every 2.5 seconds
 
     return () => clearInterval(intervalId); // Cleanup interval on component unmount
   }, []);
 
   // Extracting data for the first group (Irradiance, Temperature, Voltage)
   const timeLabels = feeds
-    .map((feed, index) => (index % 5 === 0 ? new Date(feed.timestamp).toLocaleTimeString() : ""))
+    .map((feed, index) =>
+      index % 5 === 0
+        ? new Date(feed.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        : ""
+    )
     .reverse();
   const field1Data = feeds.map((feed) => parseFloat(feed.irradiance) || 0).reverse(); // Irradiance
   const field2Data = feeds.map((feed) => parseFloat(feed.temperature) || 0).reverse(); // Temperature
@@ -44,18 +48,26 @@ const Dashboard = () => {
   const field4Data = feeds.map((feed) => parseFloat(feed.azimuth) || 0).reverse(); // Azimuth
   const field5Data = feeds.map((feed) => parseFloat(feed.zenith) || 0).reverse(); // Zenith
 
-  const chartConfig = {
+  const chartConfig = (color) => ({
     backgroundGradientFrom: "#fff",
     backgroundGradientTo: "#fff",
-    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Line color
-    strokeWidth: 2, // Line thickness
+    color: (opacity = 1) => color,
+    strokeWidth: 2,
     propsForDots: {
-      r: "4", // Dot radius
+      r: "4",
       strokeWidth: "2",
-      stroke: "#ffa726", // Dot border color
-      fill: "#ffa726", // Dot fill color
+      stroke: color,
+      fill: color,
     },
-  };
+    propsForBackgroundLines: {
+      stroke: "#e3e3e3",
+    },
+    decimalPlaces: 2,
+    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    style: {
+      borderRadius: 16,
+    },
+  });
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -64,26 +76,31 @@ const Dashboard = () => {
           fieldName="Irradiance"
           value={`${field1Data[field1Data.length - 1]?.toFixed(2)} W/m²`}
           icon={require("../assets/irradiance.png")}
+          color="#ff6b6c" // Light Red
         />
         <Card
           fieldName="Temperature"
           value={`${field2Data[field2Data.length - 1]?.toFixed(2)} °C`}
           icon={require("../assets/temperature.png")}
+          color="#ffa630" // Orange Peel
         />
         <Card
           fieldName="Voltage"
           value={`${field3Data[field3Data.length - 1]?.toFixed(2)} V`}
           icon={require("../assets/voltage.png")}
+          color="#4da1a9" // Moonstone
         />
         <Card
           fieldName="Azimuth"
           value={`${field4Data[field4Data.length - 1]?.toFixed(2)}°`}
           icon={require("../assets/azimuth.png")}
+          color="#5b5f97" // Ultra Violet
         />
         <Card
           fieldName="Zenith"
           value={`${field5Data[field5Data.length - 1]?.toFixed(2)}°`}
           icon={require("../assets/zenith.png")}
+          color="#C07CDF" // Updated color
         />
       </View>
 
@@ -93,81 +110,96 @@ const Dashboard = () => {
         <View style={styles.chartContainer}>
           {feeds.length > 0 && (
             <>
-              <LineChart
-                data={{
-                  labels: timeLabels,
-                  datasets: [
-                    {
-                      data: field1Data,
-                    },
-                  ],
-                }}
-                width={Dimensions.get("window").width - 32}
-                height={220}
-                chartConfig={chartConfig}
-                bezier
-                style={styles.chart}
-              />
-              <LineChart
-                data={{
-                  labels: timeLabels,
-                  datasets: [
-                    {
-                      data: field2Data,
-                    },
-                  ],
-                }}
-                width={Dimensions.get("window").width - 32}
-                height={220}
-                chartConfig={chartConfig}
-                bezier
-                style={styles.chart}
-              />
-              <LineChart
-                data={{
-                  labels: timeLabels,
-                  datasets: [
-                    {
-                      data: field3Data,
-                    },
-                  ],
-                }}
-                width={Dimensions.get("window").width - 32}
-                height={220}
-                chartConfig={chartConfig}
-                bezier
-                style={styles.chart}
-              />
-              <LineChart
-                data={{
-                  labels: timeLabels,
-                  datasets: [
-                    {
-                      data: field4Data,
-                    },
-                  ],
-                }}
-                width={Dimensions.get("window").width - 32}
-                height={220}
-                chartConfig={chartConfig}
-                bezier
-                style={styles.chart}
-              />
-              <LineChart
-                data={{
-                  labels: timeLabels,
-                  datasets: [
-                    {
-                      data: field5Data,
-                    },
-                  ],
-                }}
-                width={Dimensions.get("window").width - 32}
-                height={220}
-                chartConfig={chartConfig}
-                bezier
-                style={styles.chart}
-              />
+              <View style={[styles.chartWrapper, { borderColor: "#ff6b6c" }]}>
+                <Text style={[styles.chartLabel, { backgroundColor: "#ff6b6c" }]}>Irradiance</Text>
+                <LineChart
+                  data={{
+                    labels: timeLabels,
+                    datasets: [
+                      {
+                        data: field1Data,
+                      },
+                    ],
+                  }}
+                  width={Dimensions.get("window").width - 32}
+                  height={220}
+                  chartConfig={chartConfig("#ff6b6c")} // Light Red
+                  bezier
+                  style={styles.chart}
+                />
+              </View>
+              <View style={[styles.chartWrapper, { borderColor: "#ffa630" }]}>
+                <Text style={[styles.chartLabel, { backgroundColor: "#ffa630" }]}>Temperature</Text>
+                <LineChart
+                  data={{
+                    labels: timeLabels,
+                    datasets: [
+                      {
+                        data: field2Data,
+                      },
+                    ],
+                  }}
+                  width={Dimensions.get("window").width - 32}
+                  height={220}
+                  chartConfig={chartConfig("#ffa630")} // Orange Peel
+                  bezier
+                  style={styles.chart}
+                />
+              </View>
+              <View style={[styles.chartWrapper, { borderColor: "#4da1a9" }]}>
+                <Text style={[styles.chartLabel, { backgroundColor: "#4da1a9" }]}>Voltage</Text>
+                <LineChart
+                  data={{
+                    labels: timeLabels,
+                    datasets: [
+                      {
+                        data: field3Data,
+                      },
+                    ],
+                  }}
+                  width={Dimensions.get("window").width - 32}
+                  height={220}
+                  chartConfig={chartConfig("#4da1a9")} // Moonstone
+                  bezier
+                  style={styles.chart}
+                />
+              </View>
+              <View style={[styles.chartWrapper, { borderColor: "#5b5f97" }]}>
+                <Text style={[styles.chartLabel, { backgroundColor: "#5b5f97" }]}>Azimuth</Text>
+                <LineChart
+                  data={{
+                    labels: timeLabels,
+                    datasets: [
+                      {
+                        data: field4Data,
+                      },
+                    ],
+                  }}
+                  width={Dimensions.get("window").width - 32}
+                  height={220}
+                  chartConfig={chartConfig("#5b5f97")} // Ultra Violet
+                  bezier
+                  style={styles.chart}
+                />
+              </View>
+              <View style={[styles.chartWrapper, { borderColor: "#C07CDF" }]}>
+                <Text style={[styles.chartLabel, { backgroundColor: "#C07CDF" }]}>Zenith</Text>
+                <LineChart
+                  data={{
+                    labels: timeLabels,
+                    datasets: [
+                      {
+                        data: field5Data,
+                      },
+                    ],
+                  }}
+                  width={Dimensions.get("window").width - 32}
+                  height={220}
+                  chartConfig={chartConfig("#C07CDF")} // Updated color
+                  bezier
+                  style={styles.chart}
+                />
+              </View>
             </>
           )}
         </View>
@@ -180,6 +212,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 16,
+    backgroundColor: "#f0f0f0",
   },
   cardContainer: {
     flexDirection: "row",
@@ -190,9 +223,21 @@ const styles = StyleSheet.create({
   chartContainer: {
     marginTop: 16,
   },
-  chart: {
+  chartWrapper: {
     marginVertical: 8,
     borderRadius: 16,
+    borderWidth: 2,
+    overflow: "hidden",
+  },
+  chart: {
+    borderRadius: 16,
+  },
+  chartLabel: {
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingVertical: 4,
+    color: "#fff",
   },
 });
 
